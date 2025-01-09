@@ -23,7 +23,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+      - name: Debug File Structure
+        run: ls -R /home/runner/work/udacity-project4 || echo "Directory not found"
 
+      - name: Debug Current Directory
+        run: pwd
       - name: Cache pipenv dependencies
         uses: actions/cache@v3
         with:

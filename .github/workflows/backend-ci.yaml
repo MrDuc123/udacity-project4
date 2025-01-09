@@ -1,121 +1,91 @@
-name: Backend Continuous Integration
+# Following references have been used:
+# 1) Material available in the Udacity classroom exercises 
+# 2) Official documentation for GitHub Action:
+# https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
 
+# Workflow name
+name: backend-ci-workflow
+
+# Triggers 
 on:
-  # This allows running on-demand
+  # Manual trigger using the workflow_dispatch event
   workflow_dispatch:
+  # Automatic trigger on pull request events targeting the main branch
   pull_request:
+    types:
+      - closed
     branches:
       - main
-    paths:
-      # This will only run on changes to the backend code
-      - "backend/**"
 
-env:
-  PYTHON_VERSION: 3.11
-
+# Jobs in the workflow: linting, testing and build
 jobs:
-  lint:
-    name: Backend run lint
+  linting:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./backend
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Cache pipenv dependencies
-        uses: actions/cache@v3
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v5
         with:
-          path: ~/.cache/pipenv
-          key: pipenv-${{ runner.os }}-${{ hashFiles('**/Pipfile.lock') }}
-          restore-keys: |
-            pipenv-${{ runner.os }}-
-
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ env.PYTHON_VERSION }}
+          python-version: '3.10' 
 
       - name: Install pipenv
-        run: pip install pipenv
+        run: pip install pipenv --user
+
+      - name: Install flake8
+        run: pip install flake8
 
       - name: Install dependencies
-        run: pipenv install --dev
+        run: cd backend && pipenv install
 
-      - name: Run lint
-        run: pipenv run flake8 .
+      - name: Run the linter
+        run: cd backend && pipenv run lint
 
-  test:
-    name: Backend run test
+  testing:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./backend
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Setup Python
-        uses: actions/setup-python@v4
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v5
         with:
-          python-version: ${{ env.PYTHON_VERSION }}
+          python-version: '3.10' 
 
       - name: Install pipenv
-        run: pip install pipenv
+        run: pip install pipenv --user      
 
       - name: Install dependencies
-        run: pipenv install --dev
+        run: cd backend && pipenv install
 
       - name: Run tests
-        run: pipenv run pytest
+        run: cd backend && pipenv run test
 
   build:
-    name: Build & push image
+    needs: [linting, testing]
     runs-on: ubuntu-latest
-    needs: [lint, test]
-    defaults:
-      run:
-        working-directory: ./backend
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Setup Python
-        uses: actions/setup-python@v4
+      - name: Set up Python 3.10 
+        uses: actions/setup-python@v5
         with:
-          python-version: ${{ env.PYTHON_VERSION }}
-
+          python-version: '3.10' 
+  
       - name: Install pipenv
-        run: pip install pipenv
+        run: pip install pipenv --user
 
       - name: Install dependencies
-        run: pipenv install --dev
+        run: cd backend && pipenv install
 
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
+      - name: Build docker image
+        run: cd backend && docker build --tag mp-backend:latest .
+        
+      - name: Run docker container
+        run: cd backend && docker run -p 5000:5000 --name mp-backend -d mp-backend
 
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
 
-      - name: Build, Tag, and Push docker image
-        env:
-          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          REPOSITORY: backend
-          IMAGE_TAG: latest
-        run: |
-          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
-          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
 
-      - name: Cache Docker image
-        uses: actions/cache@v3
-        with:
-          path: ~/docker-cache
-          key: docker-${{ github.sha }}-backend
-          restore-keys: |
-            docker-${{ github.sha }}-
+ 

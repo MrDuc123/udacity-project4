@@ -24,7 +24,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          path: my-custom-folder
+          path: udacity
 
       - name: Cache pipenv dependencies
         uses: actions/cache@v3
@@ -61,7 +61,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          path: my-custom-folder
+          path: udacity
 
       - name: Setup Python
         uses: actions/setup-python@v4
@@ -91,7 +91,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
         with:
-          path: my-custom-folder
+          path: udacity
 
       - name: Setup Python
         uses: actions/setup-python@v4

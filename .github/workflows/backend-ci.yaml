@@ -19,12 +19,10 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: udacity/starter/backend
+        working-directory: starter/backend
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-        with:
-          path: udacity
 
       - name: Cache pipenv dependencies
         uses: actions/cache@v3
@@ -56,12 +54,10 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: udacity/starter/backend
+        working-directory: starter/backend
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-        with:
-          path: udacity
 
       - name: Setup Python
         uses: actions/setup-python@v4
@@ -86,12 +82,10 @@ jobs:
     needs: [lint, test]
     defaults:
       run:
-        working-directory: udacity/starter/backend
+        working-directory: starter/backend
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-        with:
-          path: udacity
 
       - name: Setup Python
         uses: actions/setup-python@v4

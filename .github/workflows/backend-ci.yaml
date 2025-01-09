@@ -19,17 +19,11 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./udacity-project4/backend
+        working-directory: ./backend
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - name: Debug File Structure
-        run: ls -R /home/runner/work/udacity-project4 || echo "Directory not found"
 
-      - name: Debug Current Directory
-        run: pwd
       - name: Cache pipenv dependencies
         uses: actions/cache@v3
         with:
@@ -41,26 +35,23 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: ${{env.PYTHON_VERSION}}
+          python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Install pipenv
-        run: |
-          pip install pipenv
+        run: pip install pipenv
 
       - name: Install dependencies
-        run: |
-          pipenv install && pip install flake8
+        run: pipenv install --dev
 
       - name: Run lint
-        run: |
-          pipenv run lint
+        run: pipenv run flake8 .
 
   test:
     name: Backend run test
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./udacity-project4/backend
+        working-directory: ./backend
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -68,27 +59,24 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: ${{env.PYTHON_VERSION}}
+          python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Install pipenv
-        run: |
-          pip install pipenv
+        run: pip install pipenv
 
       - name: Install dependencies
-        run: |
-          pipenv install
+        run: pipenv install --dev
 
       - name: Run tests
-        run: |
-          pipenv run test
-          
+        run: pipenv run pytest
+
   build:
     name: Build & push image
     runs-on: ubuntu-latest
     needs: [lint, test]
     defaults:
       run:
-        working-directory: ./udacity-project4/backend
+        working-directory: ./backend
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -96,15 +84,13 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: ${{env.PYTHON_VERSION}}
+          python-version: ${{ env.PYTHON_VERSION }}
 
       - name: Install pipenv
-        run: |
-          pip install pipenv && pip install flake8
+        run: pip install pipenv
 
       - name: Install dependencies
-        run: |
-          pipenv install
+        run: pipenv install --dev
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -116,8 +102,6 @@ jobs:
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
-        with:
-          mask-password: "true"
 
       - name: Build, Tag, and Push docker image
         env:
@@ -126,7 +110,7 @@ jobs:
           IMAGE_TAG: latest
         run: |
           docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG .
-          docker images
+          docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
 
       - name: Cache Docker image
         uses: actions/cache@v3

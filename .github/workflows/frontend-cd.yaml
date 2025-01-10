@@ -95,7 +95,7 @@ jobs:
           aws eks update-kubeconfig --name cluster-project4
           export EXTERNALIP=$(kubectl get svc backend -o=jsonpath='{.status.loadBalancer.ingress[0].hostname}{"\n"}{.status.loadBalancer.ingress[0].ip}')
           echo $EXTERNALIP
-          docker build -t $REGISTRY/$REPOSITORY:$IMAGE_TAG --build-arg=REACT_APP_MOVIE_API_URL=http://$EXTERNALIP .
+          docker build --no-cache -t $REGISTRY/$REPOSITORY:$IMAGE_TAG --build-arg=REACT_APP_MOVIE_API_URL=http://$EXTERNALIP .
           docker images
           docker push $REGISTRY/$REPOSITORY:$IMAGE_TAG
 

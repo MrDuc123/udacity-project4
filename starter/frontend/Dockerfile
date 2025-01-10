@@ -5,8 +5,6 @@ ENV REACT_APP_MOVIE_API_URL=${REACT_APP_MOVIE_API_URL}
 
 WORKDIR /app
 
-RUN echo $REACT_APP_MOVIE_API_URL
-
 # Copy dependdency files
 COPY package*.json ./
 
@@ -17,7 +15,7 @@ RUN npm ci
 COPY . .
 
 # Build the app
-RUN REACT_APP_MOVIE_API_URL=$REACT_APP_MOVIE_API_URL npm run build
+RUN npm run build
 
 # Expose the port used by the React app
 EXPOSE 3000

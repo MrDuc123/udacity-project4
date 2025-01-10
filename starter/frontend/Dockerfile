@@ -17,7 +17,7 @@ RUN npm ci
 COPY . .
 
 # Build the app
-RUN npm run build
+RUN REACT_APP_MOVIE_API_URL=$REACT_APP_MOVIE_API_URL npm run build
 
 # Expose the port used by the React app
 EXPOSE 3000

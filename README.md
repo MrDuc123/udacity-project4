@@ -29,6 +29,7 @@ In the `starter` folder, you'll find 2 folders, one named `frontend` and one nam
    5. Runs a deploy job that applies the Kubernetes manifests to the provided cluster.
       1. The manifest should deploy the newly created tagged image
       2. The tag applied to the image should be the git SHA of the commit that triggered the build
+   6. Frontend URL: a0ad3beb49d854c79a5b3a15d23ec565-1635892599.us-east-1.elb.amazonaws.com
 
 ### Backend
 
@@ -48,7 +49,8 @@ In the `starter` folder, you'll find 2 folders, one named `frontend` and one nam
    5. Runs a deploy job that applies the Kubernetes manifests to the provided cluster.
       1. The manifest should deploy the newly created tagged image
       2. The tag applied to the image should be the git SHA of the commit that triggered the build
-
+   6. Backend URL: a9addefdb9c944be195645212fb98245-1359183045.us-east-1.elb.amazonaws.com
+   
 **⚠️ NOTE**
 Once you begin work on Continuous Deployment, you'll need to first setup the AWS and Kubernetes environment. Follow the [instructions below](#setting-up-continuous-deployment-environment)  instructions only when you're ready to start testing your deployments.
 

@@ -29,7 +29,7 @@ In the `starter` folder, you'll find 2 folders, one named `frontend` and one nam
    5. Runs a deploy job that applies the Kubernetes manifests to the provided cluster.
       1. The manifest should deploy the newly created tagged image
       2. The tag applied to the image should be the git SHA of the commit that triggered the build
-   6. Frontend URL: a0ad3beb49d854c79a5b3a15d23ec565-1635892599.us-east-1.elb.amazonaws.com
+   6. Frontend URL: http://adc9451c59f6245819325318132c7afb-2067094605.us-east-1.elb.amazonaws.com/
 
 ### Backend
 
@@ -49,7 +49,8 @@ In the `starter` folder, you'll find 2 folders, one named `frontend` and one nam
    5. Runs a deploy job that applies the Kubernetes manifests to the provided cluster.
       1. The manifest should deploy the newly created tagged image
       2. The tag applied to the image should be the git SHA of the commit that triggered the build
-   6. Backend URL: a9addefdb9c944be195645212fb98245-1359183045.us-east-1.elb.amazonaws.com
+   6. Backend URL: http://a85c5cd4ad15145a19ac5a9c294c5000-1737205281.us-east-1.elb.amazonaws.com 
+
    
 **⚠️ NOTE**
 Once you begin work on Continuous Deployment, you'll need to first setup the AWS and Kubernetes environment. Follow the [instructions below](#setting-up-continuous-deployment-environment)  instructions only when you're ready to start testing your deployments.
@@ -251,7 +252,7 @@ To build the frontend application for a production deployment, they use the foll
 # The URL below would be the default backend URL when running locally
 docker build --build-arg=REACT_APP_MOVIE_API_URL=http://localhost:5000 --tag=mp-frontend:latest .
 
-docker run --name mp-frontend -p 3000:3000 -d mp-frontend]
+docker run --name mp-frontend -p 3000:3000 -d mp-frontend
 
 # Open the browser to localhost:3000 and you should see the list of movies,
 # provided the backend is already running and available on localhost:5000
